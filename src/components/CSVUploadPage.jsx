@@ -102,7 +102,7 @@ export function CSVUploadPage({ onRoutesGenerated }) {
       }, 300);
 
       // Make API call to upload CSV using axios
-      const response = await axios.post('http://localhost:5000/upload-csv', formData, {
+      const response = await axios.post('https://route-optima-backend-nk77.onrender.com/upload-csv', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
