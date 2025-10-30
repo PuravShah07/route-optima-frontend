@@ -1,7 +1,5 @@
 
-  # RouteOptima Figma Design Prompt
-
-  This is a code bundle for RouteOptima Figma Design Prompt. The original project is available at https://www.figma.com/design/BzIC9LAgr9oFaM6baCQjY6/RouteOptima-Figma-Design-Prompt.
+  # RouteOptima - A Smart Route Optimizer
 
   ## Running the code
 
