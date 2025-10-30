@@ -6,24 +6,24 @@ import { Button } from "./ui/button";
 export function ContactPage() {
   const developers = [
     {
-      name: "Arjun Sharma",
-      role: "Lead Developer & System Architect",
-      email: "arjun.sharma@routeoptima.com",
-      github: "github.com/arjunsharma",
-      linkedin: "linkedin.com/in/arjunsharma",
+      name: "Purav Shah",
+      role: "Product Manager",
+      email: "24bce005@nirmauni.ac.in",
+      github: "github.com/PuravShah07",
+      linkedin: "https://www.linkedin.com/in/purav-shah-40a776331",
       bio: "Specialized in algorithmic optimization and scalable system design. Built the core routing engine using advanced graph algorithms and machine learning.",
       skills: ["Algorithm Design", "React", "Node.js", "Machine Learning"],
-      avatar: "AS"
+      avatar: "PS"
     },
     {
-      name: "Priya Patel",
+      name: "Divya Langaliya",
       role: "Full Stack Developer & UI/UX Designer",
-      email: "priya.patel@routeoptima.com",
-      github: "github.com/priyapatel",
-      linkedin: "linkedin.com/in/priyapatel",
+      email: "24bce054@nirmauni.ac.in",
+      github: "https://github.com/Divya-tech06",
+      linkedin: "https://www.linkedin.com/in/divya-langalia-b46a16305/",
       bio: "Passionate about creating intuitive user experiences and building responsive web applications. Designed and developed the entire frontend architecture.",
       skills: ["React", "TypeScript", "UI/UX Design", "Motion Design"],
-      avatar: "PP"
+      avatar: "DL"
     }
   ];
 
