@@ -13,7 +13,7 @@ export function RoutesOverviewPage({ orders }) {
   // Check if orders is empty or undefined
   if (!orders || orders.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-white to-[#F2F2F2] py-12">
+      <div className="min-h-screen bg-linear-to-b from-white to-[#F2F2F2] py-12">
         <div className="container mx-auto px-6 text-center">
           <h1 className="text-[#0B3D91] mb-4" style={{ fontSize: '36px', fontWeight: '700' }}>
             No Orders Found
@@ -102,7 +102,7 @@ export function RoutesOverviewPage({ orders }) {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-[#F2F2F2] py-12 relative z-10">
+    <div className="min-h-screen bg-linear-to-b from-white to-[#F2F2F2] py-12 relative z-10">
       <div className="container mx-auto px-6">
         <motion.div 
           className="mb-8"

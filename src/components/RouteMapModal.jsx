@@ -1,148 +1,52 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { X, Play, Pause, RotateCcw, Navigation2, MapPin } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Progress } from "./ui/progress";
 import { Card } from "./ui/card";
+import { MapContainer, TileLayer, Marker, Polyline, Popup, useMap } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+
+// Fix Leaflet default marker issue
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+  iconUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+  shadowUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+});
+
+// Auto-zoom helper component
+function FitMapBounds({ positions }) {
+  const map = useMap();
+  useEffect(() => {
+    if (positions.length > 1) {
+      const bounds = L.latLngBounds(positions);
+      map.fitBounds(bounds, { padding: [50, 50] });
+    }
+  }, [positions, map]);
+  return null;
+}
 
 export function RouteMapModal({ isOpen, onClose, clusterNumber, orders }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  const canvasRef = useRef(null);
 
-  // Calculate bounds for visualization
-  const lats = orders.map(o => o.Latitude);
-  const lngs = orders.map(o => o.Longitude);
-  const minLat = Math.min(...lats);
-  const maxLat = Math.max(...lats);
-  const minLng = Math.min(...lngs);
-  const maxLng = Math.max(...lngs);
-  const centerLat = (maxLat + minLat) / 2;
-  const centerLng = (maxLng + minLng) / 2;
+  if (!orders || orders.length === 0) return null;
 
-  // Draw map visualization
-  useEffect(() => {
-    if (!isOpen || !canvasRef.current) return;
+  const positions = orders.map((o) => [parseFloat(o.Latitude), parseFloat(o.Longitude)]);
+  const progress = (currentStep / (orders.length - 1)) * 100;
+  const currentOrder = orders[currentStep];
 
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    const width = canvas.width;
-    const height = canvas.height;
-
-    // Clear canvas
-    ctx.clearRect(0, 0, width, height);
-
-    // Draw background
-    ctx.fillStyle = '#f0f9ff';
-    ctx.fillRect(0, 0, width, height);
-
-    // Draw grid
-    ctx.strokeStyle = '#e0e7ff';
-    ctx.lineWidth = 1;
-    for (let i = 0; i < 10; i++) {
-      ctx.beginPath();
-      ctx.moveTo((width / 10) * i, 0);
-      ctx.lineTo((width / 10) * i, height);
-      ctx.stroke();
-      
-      ctx.beginPath();
-      ctx.moveTo(0, (height / 10) * i);
-      ctx.lineTo(width, (height / 10) * i);
-      ctx.stroke();
-    }
-
-    // Function to convert lat/lng to canvas coordinates
-    const toCanvasCoords = (lat, lng) => {
-      const padding = 50;
-      const latRange = maxLat - minLat || 0.01;
-      const lngRange = maxLng - minLng || 0.01;
-      
-      const x = padding + ((lng - minLng) / lngRange) * (width - 2 * padding);
-      const y = height - (padding + ((lat - minLat) / latRange) * (height - 2 * padding));
-      
-      return { x, y };
-    };
-
-    // Draw route lines
-    ctx.strokeStyle = '#1E90FF';
-    ctx.lineWidth = 3;
-    ctx.setLineDash([10, 5]);
-    
-    ctx.beginPath();
-    orders.forEach((order, index) => {
-      const { x, y } = toCanvasCoords(order.Latitude, order.Longitude);
-      if (index === 0) {
-        ctx.moveTo(x, y);
-      } else {
-        ctx.lineTo(x, y);
-      }
-    });
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    // Draw markers
-    orders.forEach((order, index) => {
-      const { x, y } = toCanvasCoords(order.Latitude, order.Longitude);
-      
-      // Determine color
-      let color = '#1E90FF';
-      if (index === 0) color = '#10b981'; // Start - green
-      if (index === orders.length - 1) color = '#ef4444'; // End - red
-      if (index === currentStep) color = '#f59e0b'; // Current - orange
-
-      // Draw marker shadow
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
-      ctx.beginPath();
-      ctx.ellipse(x, y + 22, 10, 4, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Draw marker
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.arc(x, y - 10, 12, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Draw marker point
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.lineTo(x - 8, y - 18);
-      ctx.lineTo(x + 8, y - 18);
-      ctx.closePath();
-      ctx.fill();
-
-      // Draw inner circle
-      ctx.fillStyle = 'white';
-      ctx.beginPath();
-      ctx.arc(x, y - 10, 8, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Draw number
-      ctx.fillStyle = color;
-      ctx.font = 'bold 12px Arial';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(index + 1, x, y - 10);
-
-      // Highlight current step
-      if (index === currentStep && isPlaying) {
-        ctx.strokeStyle = '#f59e0b';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.arc(x, y - 10, 16, 0, Math.PI * 2);
-        ctx.stroke();
-      }
-    });
-
-  }, [isOpen, orders, currentStep, isPlaying, minLat, maxLat, minLng, maxLng]);
-
-  // Animation playback
+  // Animation playback logic (unchanged)
   useEffect(() => {
     if (!isPlaying) return;
-
     const timer = setInterval(() => {
-      setCurrentStep(prev => {
+      setCurrentStep((prev) => {
         if (prev >= orders.length - 1) {
           setIsPlaying(false);
           return prev;
@@ -150,28 +54,19 @@ export function RouteMapModal({ isOpen, onClose, clusterNumber, orders }) {
         return prev + 1;
       });
     }, 2000);
-
     return () => clearInterval(timer);
   }, [isPlaying, orders.length]);
 
   const handlePlay = () => {
-    if (currentStep >= orders.length - 1) {
-      setCurrentStep(0);
-    }
+    if (currentStep >= orders.length - 1) setCurrentStep(0);
     setIsPlaying(true);
   };
 
-  const handlePause = () => {
-    setIsPlaying(false);
-  };
-
+  const handlePause = () => setIsPlaying(false);
   const handleReset = () => {
     setCurrentStep(0);
     setIsPlaying(false);
   };
-
-  const progress = (currentStep / (orders.length - 1)) * 100;
-  const currentOrder = orders[currentStep];
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -185,20 +80,39 @@ export function RouteMapModal({ isOpen, onClose, clusterNumber, orders }) {
             {orders.length} delivery stops • Interactive route visualization
           </p>
         </DialogHeader>
-        
+
         <div className="space-y-4">
-          {/* Canvas Map */}
+          {/* 🗺️ Real OpenStreetMap */}
           <div className="relative w-full h-[500px] bg-white rounded-lg overflow-hidden border-2 border-gray-200">
-            <canvas
-              ref={canvasRef}
-              width={1000}
-              height={500}
-              className="w-full h-full"
-            />
+            <MapContainer
+              center={positions[0]}
+              zoom={13}
+              style={{ height: "100%", width: "100%" }}
+            >
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+              />
+              <FitMapBounds positions={positions} />
+
+              {/* Route Line */}
+              <Polyline positions={positions} color="blue" weight={4} opacity={0.7} />
+
+              {/* Markers */}
+              {positions.map((pos, i) => (
+                <Marker key={i} position={pos}>
+                  <Popup>
+                    Stop {i + 1}: {orders[i].CustomerName}
+                    <br />
+                    {orders[i].Latitude}, {orders[i].Longitude}
+                  </Popup>
+                </Marker>
+              ))}
+            </MapContainer>
           </div>
 
-          {/* Current Order Info Card */}
-          <Card className="p-4 bg-gradient-to-r from-[#1E90FF]/5 to-[#0B3D91]/5">
+          {/* Current Stop Info */}
+          <Card className="p-4 bg-linear-to-r from-[#1E90FF]/5 to-[#0B3D91]/5">
             <div className="flex items-start gap-4">
               <div className="bg-[#1E90FF] p-3 rounded-lg">
                 <MapPin className="w-6 h-6 text-white" />
@@ -226,10 +140,14 @@ export function RouteMapModal({ isOpen, onClose, clusterNumber, orders }) {
                   </div>
                   <div>
                     <span className="text-gray-500">Delivery Type:</span>
-                    <span className={`ml-2 px-2 py-1 rounded text-xs font-medium ${
-                      currentOrder.IsPaidDelivery ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
-                    }`}>
-                      {currentOrder.IsPaidDelivery ? 'Paid' : 'Standard'}
+                    <span
+                      className={`ml-2 px-2 py-1 rounded text-xs font-medium ${
+                        currentOrder.IsPaidDelivery
+                          ? "bg-green-100 text-green-700"
+                          : "bg-gray-100 text-gray-700"
+                      }`}
+                    >
+                      {currentOrder.IsPaidDelivery ? "Paid" : "Standard"}
                     </span>
                   </div>
                 </div>
@@ -261,9 +179,9 @@ export function RouteMapModal({ isOpen, onClose, clusterNumber, orders }) {
                 </div>
                 <span className="text-gray-600">{orders[currentStep].CustomerName}</span>
               </div>
-              
+
               <Progress value={progress} className="h-2 mb-4" />
-              
+
               <div className="flex items-center gap-2">
                 {!isPlaying ? (
                   <Button
@@ -285,12 +203,8 @@ export function RouteMapModal({ isOpen, onClose, clusterNumber, orders }) {
                     Pause
                   </Button>
                 )}
-                
-                <Button
-                  onClick={handleReset}
-                  variant="outline"
-                  size="sm"
-                >
+
+                <Button onClick={handleReset} variant="outline" size="sm">
                   <RotateCcw className="w-4 h-4 mr-2" />
                   Reset
                 </Button>
@@ -321,12 +235,14 @@ export function RouteMapModal({ isOpen, onClose, clusterNumber, orders }) {
               </div>
             </div>
 
-            {/* Google Maps Link */}
+            {/* External Google Maps link (kept same for convenience) */}
             <div className="flex justify-center">
               <Button
                 onClick={() => {
-                  const url = `https://www.google.com/maps/dir/${orders.map(o => `${o.Latitude},${o.Longitude}`).join('/')}`;
-                  window.open(url, '_blank');
+                  const url = `https://www.google.com/maps/dir/${orders
+                    .map((o) => `${o.Latitude},${o.Longitude}`)
+                    .join("/")}`;
+                  window.open(url, "_blank");
                 }}
                 variant="outline"
                 className="border-[#1E90FF] text-[#1E90FF] hover:bg-[#1E90FF]/10"

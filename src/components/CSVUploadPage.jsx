@@ -191,7 +191,7 @@ export function CSVUploadPage({ onRoutesGenerated }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-[#F2F2F2] py-12">
+    <div className="min-h-screen bg-linear-to-b from-white to-[#F2F2F2] py-12">
       <div className="container mx-auto px-6">
         <motion.div 
           className="mb-8"

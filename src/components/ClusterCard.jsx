@@ -25,12 +25,12 @@ export function ClusterCard({
     <Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-white">
       {/* Card Header */}
       <div 
-        className="p-6 cursor-pointer bg-gradient-to-r from-[#1E90FF]/5 to-[#0B3D91]/5 hover:from-[#1E90FF]/10 hover:to-[#0B3D91]/10 transition-colors"
+        className="p-6 cursor-pointer bg-linear-to-r from-[#1E90FF]/5 to-[#0B3D91]/5 hover:from-[#1E90FF]/10 hover:to-[#0B3D91]/10 transition-colors"
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="bg-gradient-to-br from-[#1E90FF] to-[#0B3D91] w-12 h-12 rounded-full flex items-center justify-center">
+            <div className="bg-linear-to-br from-[#1E90FF] to-[#0B3D91] w-12 h-12 rounded-full flex items-center justify-center">
               <span className="text-white" style={{ fontSize: '18px', fontWeight: '700' }}>
                 {clusterNumber}
               </span>

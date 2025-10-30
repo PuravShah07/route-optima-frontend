@@ -28,7 +28,7 @@ export function ContactPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-[#F2F2F2] py-12">
+    <div className="min-h-screen bg-linear-to-b from-white to-[#F2F2F2] py-12">
       <div className="container mx-auto px-6">
         {/* Header */}
         <motion.div
@@ -70,7 +70,7 @@ export function ContactPage() {
                     whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <div className="w-32 h-32 rounded-full bg-gradient-to-br from-[#1E90FF] to-[#0B3D91] flex items-center justify-center text-white shadow-lg">
+                    <div className="w-32 h-32 rounded-full bg-linear-to-br from-[#1E90FF] to-[#0B3D91] flex items-center justify-center text-white shadow-lg">
                       <span style={{ fontSize: '48px', fontWeight: '700' }}>
                         {dev.avatar}
                       </span>
@@ -160,7 +160,7 @@ export function ContactPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 0.6 }}
         >
-          <Card className="p-8 bg-gradient-to-r from-[#1E90FF] to-[#0B3D91] border-none text-white">
+          <Card className="p-8 bg-linear-to-r from-[#1E90FF] to-[#0B3D91] border-none text-white">
             <div className="grid md:grid-cols-2 gap-8">
               <div>
                 <h3 className="mb-4" style={{ fontSize: '24px', fontWeight: '700' }}>
@@ -168,7 +168,7 @@ export function ContactPage() {
                 </h3>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
-                    <MapPin className="w-5 h-5 mt-1 flex-shrink-0" />
+                    <MapPin className="w-5 h-5 mt-1 shrink-0" />
                     <div>
                       <p className="opacity-90">
                         Tech Hub, Innovation District<br />
@@ -178,7 +178,7 @@ export function ContactPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Mail className="w-5 h-5 flex-shrink-0" />
+                    <Mail className="w-5 h-5 shrink-0" />
                     <p className="opacity-90">contact@routeoptima.com</p>
                   </div>
                 </div>
