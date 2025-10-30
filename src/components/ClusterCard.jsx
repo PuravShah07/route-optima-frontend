@@ -48,7 +48,6 @@ export function ClusterCard({
           <div className="flex items-center gap-4">
             <div className="text-right">
               <div className="flex items-center gap-2 justify-end mb-1">
-                <DollarSign className="w-4 h-4 text-green-600" />
                 <span className="text-[#0B3D91]" style={{ fontSize: '20px', fontWeight: '700' }}>
                   ₹{totalCost.toFixed(2)}
                 </span>

@@ -97,8 +97,8 @@ export function RoutesOverviewPage({ orders }) {
   const summaryCards = [
     { label: "Total Orders", value: totalOrders, icon: Package, color: "bg-[#1E90FF]/10", iconColor: "text-[#1E90FF]" },
     { label: "Total Vehicles", value: clusters.length, icon: Truck, color: "bg-[#0B3D91]/10", iconColor: "text-[#0B3D91]" },
-    { label: "Total Cost", value: `₹${totalCost.toFixed(0)}`, icon: TrendingDown, color: "bg-green-100", iconColor: "text-green-600", extra: "12% saved" },
-    { label: "Total Distance", value: `${totalDistance.toFixed(0)} km`, icon: TrendingUp, color: "bg-blue-100", iconColor: "text-blue-600", extra: "18% saved" }
+    { label: "Total Cost", value: `₹${totalCost.toFixed(0)}`, icon: TrendingDown, color: "bg-green-100", iconColor: "text-green-600"},
+    { label: "Total Distance", value: `${totalDistance.toFixed(0)} km`, icon: TrendingUp, color: "bg-blue-100", iconColor: "text-blue-600" }
   ];
 
   return (

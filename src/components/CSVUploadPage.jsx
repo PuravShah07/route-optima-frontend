@@ -56,17 +56,18 @@ export function CSVUploadPage({ onRoutesGenerated }) {
       const lines = text.split('\n').filter(line => line.trim());
       const headers = lines[0].split(',');
       
-      const parsedOrders = lines.slice(1, 6).map((line, index) => {
-        const values = line.split(',');
-        return {
-          OrderID: values[0] || `ORD-${1000 + index}`,
-          CustomerName: values[1] || `Customer ${index + 1}`,
-          Latitude: parseFloat(values[2]) || 28.6 + Math.random() * 0.1,
-          Longitude: parseFloat(values[3]) || 77.2 + Math.random() * 0.1,
-          IsPaidDelivery: values[4]?.toLowerCase() === 'true' || Math.random() > 0.5,
-          OrderStatus: values[5] || 'Pending'
-        };
-      });
+    const parsedOrders = lines.slice(1, 6).map((line, index) => {
+      const values = line.split(',').map(v => v.trim());
+      return {
+        OrderID: values[0],
+        CustomerName: values[1],
+        Latitude: parseFloat(values[3]),
+        Longitude: parseFloat(values[4]),
+        IsPaidDelivery: values[2] === '1' || values[4]?.toLowerCase() === 'true',
+        OrderStatus: values[5]
+      };
+    });
+
       
       setOrders(parsedOrders);
     };
